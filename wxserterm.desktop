@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=wxSerTerm
+GenericName=Serial Terminal
+Comment=A serial terminal based on wxWidgets
+Categories=GTK;Utility;FileTransfer;TerminalEmulator;
+Exec=wxserterm %U
+Icon=display
+StartupNotify=true
+Terminal=false
+Type=Application

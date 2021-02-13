@@ -1,12 +1,12 @@
 pkgname=wxserterm
-pkgver=0.1
+pkgver=r7.ad976ae
 pkgrel=1
 pkgdesc="wxWidgets simple Serial Terminal"
 arch=('x86_64')
 license=('MIT')
-depends=()
+depends=('wxgtk2')
 makedepends=('git' 'cbp2make')
-source=("git+https://github.com/mirai-computing/cbp2make")
+source=("git+https://github.com/mekatronik-achmadi/wxserterm")
 md5sums=('SKIP')
 
 pkgver() {
@@ -16,10 +16,12 @@ pkgver() {
 
 build() {
   cd "$srcdir/${pkgname}"
-  make -f cbp2make.cbp.mak.unix release
+  cbp2make -in wxserterm.cbp -cfg Release -out Makefile
+  make
 }
 
 package() {
   cd "$srcdir/${pkgname}"
-  install -Dm 755 ./bin/Release/cbp2make $pkgdir/usr/bin/cbp2make
+  install -Dm 755 ./bin/Release/${pkgname} $pkgdir/usr/bin/${pkgname}
+  install -Dm 644 ${pkgname}.desktop $pkgdir/usr/share/applications/${pkgname}.desktop
 }
