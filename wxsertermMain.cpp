@@ -49,10 +49,23 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 wxsertermFrame::wxsertermFrame(wxFrame *frame)
     : GUIFrame(frame)
 {
-#if wxUSE_STATUSBAR
-    statusBar->SetStatusText(_("Hello Code::Blocks user!"), 0);
-    statusBar->SetStatusText(wxbuildinfo(short_f), 1);
-#endif
+    serComm = new ce::ceSerial();
+    ignoreLF = true;
+
+    addListPort();
+    addListBaud();
+
+    devPort = m_chPort->GetString(m_chPort->GetSelection());
+    devBaud = wxAtol(m_chBaud->GetString(m_chBaud->GetSelection()));
+
+    serTimer = new wxTimer();
+    serTimer->Bind(wxEVT_TIMER, &wxsertermFrame::onTimerTick, this);
+
+    m_btnPortOpen->SetLabel("Open Port");
+    m_btnPortList->Enable(true);
+    m_chPort->Enable(true);
+    m_chBaud->Enable(true);
+    statusBar->SetStatusText("Closed: "+ devPort +"-"+wxString::Format(wxT("%lu"),devBaud)+"-8N1N",0);
 }
 
 wxsertermFrame::~wxsertermFrame()
@@ -61,12 +74,143 @@ wxsertermFrame::~wxsertermFrame()
 
 void wxsertermFrame::OnClose(wxCloseEvent &event)
 {
+    closingPort();
     Destroy();
 }
 
 void wxsertermFrame::OnQuit(wxCommandEvent &event)
 {
+    closingPort();
     Destroy();
+}
+
+void wxsertermFrame::addListPort(void){
+#ifdef ceLINUX
+    m_chPort->Append(_("/dev/ttyUSB0"));
+	m_chPort->Append(_("/dev/ttyUSB1"));
+	m_chPort->Append(_("/dev/ttyUSB2"));
+	m_chPort->Append(_("/dev/ttyACM0"));
+	m_chPort->Append(_("/dev/ttyACM1"));
+	m_chPort->Append(_("/dev/ttyACM2"));
+#else
+    m_chPort->Append(_("\\\\.\\COM1"));
+	m_chPort->Append(_("\\\\.\\COM2"));
+	m_chPort->Append(_("\\\\.\\COM3"));
+	m_chPort->Append(_("\\\\.\\COM4"));
+	m_chPort->Append(_("\\\\.\\COM5"));
+	m_chPort->Append(_("\\\\.\\COM6"));
+#endif
+    m_chPort->SetSelection(0);
+}
+
+void wxsertermFrame::addListBaud(void){
+    m_chBaud->Append(_("4800"));
+	m_chBaud->Append(_("9600"));
+	m_chBaud->Append(_("38400"));
+	m_chBaud->Append(_("57600"));
+	m_chBaud->Append(_("115200"));
+
+	m_chBaud->SetSelection(1);
+}
+
+void wxsertermFrame::closingPort(void){
+    if(serComm->IsOpened()){
+        serTimer->Stop();
+        serComm->Close();
+        m_btnPortOpen->SetLabel("Open Port");
+        m_btnPortList->Enable(true);
+        m_chPort->Enable(true);
+        m_chBaud->Enable(true);
+    }
+}
+
+void wxsertermFrame::onCharReceive(char ch){
+    if(ignoreLF){if(ch=='\r')return;}
+
+    m_txtConsole->AppendText(wxString::Format(wxT("%c"),ch));
+}
+
+void wxsertermFrame::onTimerTick(wxTimerEvent& event){
+    char chr;
+    bool isReceive;
+
+    do{
+        chr = serComm->ReadChar(isReceive);
+        if(isReceive) onCharReceive(chr);
+    }while(isReceive);
+}
+
+void wxsertermFrame::onPortChoice(wxCommandEvent& event){
+    devPort = m_chPort->GetString(m_chPort->GetSelection());
+    statusBar->SetStatusText("Closed: "+ devPort +"-"+wxString::Format(wxT("%lu"),devBaud)+"-8N1N",0);
+}
+
+void wxsertermFrame::onBaudChoice(wxCommandEvent& event){
+    devBaud = wxAtol(m_chBaud->GetString(m_chBaud->GetSelection()));
+    statusBar->SetStatusText("Closed: "+ devPort +"-"+wxString::Format(wxT("%lu"),devBaud)+"-8N1N",0);
+}
+
+char* wxsertermFrame::wxstr2char(wxString& Text){
+    std::string strBuff = Text.ToStdString();
+
+    int size = strBuff.size();
+    char *a = new char[size+1];
+    a[strBuff.size()] = 0;
+    memcpy(a, Text.c_str(), size);
+
+    return a;
+}
+
+void wxsertermFrame::onTxtSendEnter(wxCommandEvent& event){
+    if(serComm->IsOpened()){
+        serReq = m_txtSend->GetValue();
+        serReq += "\r\n";
+
+        serComm->Write(wxstr2char(serReq));
+        m_txtSend->Clear();
+        statusBar->SetStatusText(serReq +" sent",1);
+    }
+    else{
+        statusBar->SetStatusText("Port "+ devPort +" is not opened",1);
+    }
+}
+
+void wxsertermFrame::defaultPort(void){
+    serComm->SetDataSize(8);
+    serComm->SetParity('N');
+    serComm->SetStopBits(1);
+    serComm->SetDTR(false);
+    serComm->SetRTS(false);
+}
+
+void wxsertermFrame::onBtnPortOpen(wxCommandEvent& event){
+    if(m_btnPortOpen->GetLabel()=="Open Port"){
+        if(!serComm->IsOpened()){
+            serComm->SetComPort(devPort.ToStdString());
+            serComm->SetBaudRate(devBaud);
+            defaultPort();
+
+            if(serComm->Open()==0){
+                m_btnPortOpen->SetLabel("Close Port");
+                statusBar->SetStatusText("Opened: "+ devPort +"-"+wxString::Format(wxT("%lu"),devBaud)+"-8N1N",0);
+                m_btnPortList->Enable(false);
+                m_chPort->Enable(false);
+                m_chBaud->Enable(false);
+                serTimer->Start(10);
+            }
+            else{
+                serTimer->Stop();
+                m_btnPortOpen->SetLabel("Open Port");
+                statusBar->SetStatusText("Failed: "+ devPort +"-"+wxString::Format(wxT("%lu"),devBaud)+"-8N1N",0);
+                m_btnPortList->Enable(true);
+                m_chPort->Enable(true);
+                m_chBaud->Enable(true);
+            }
+        }
+    }
+    else{
+        closingPort();
+    }
 }
 
 void wxsertermFrame::OnAbout(wxCommandEvent &event)
@@ -107,7 +251,7 @@ void wxsertermFrame::OnAbout(wxCommandEvent &event)
     desc = desc + "ceSerial (git)";
 
     info.SetName("wxWidget Serial Terminal");
-    info.SetCopyright("MIT by Achmadi@2021");
+    info.SetCopyright("Achmadi@2021");
     info.SetLicence(license);
     info.SetDescription(desc);
 
