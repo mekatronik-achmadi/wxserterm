@@ -11,7 +11,7 @@
 #define WXSERTERMMAIN_H
 
 
-
+#include "wx/aboutdlg.h"
 #include "wxsertermApp.h"
 
 

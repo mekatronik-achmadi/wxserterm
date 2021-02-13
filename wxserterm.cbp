@@ -30,6 +30,8 @@
 		<Unit filename="GUIFrame.cpp" />
 		<Unit filename="GUIFrame.h" />
 		<Unit filename="WxWizFrame.fbp" />
+		<Unit filename="ceSerial.cpp" />
+		<Unit filename="ceSerial.h" />
 		<Unit filename="wxsertermApp.cpp" />
 		<Unit filename="wxsertermApp.h" />
 		<Unit filename="wxsertermMain.cpp" />

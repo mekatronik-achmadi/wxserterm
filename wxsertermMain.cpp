@@ -71,6 +71,45 @@ void wxsertermFrame::OnQuit(wxCommandEvent &event)
 
 void wxsertermFrame::OnAbout(wxCommandEvent &event)
 {
-    wxString msg = wxbuildinfo(long_f);
-    wxMessageBox(msg, _("Welcome to..."));
+    wxAboutDialogInfo info;
+
+    wxString license =
+    L"The MIT License\n"
+    L"\n"
+    L"Copyright (c) 2021 by Achmadi \n"
+    L"\n"
+    L"Permission is hereby granted, free of charge, to any person obtaining\n"
+    L"a copy of this software and associated documentation files (the\n"
+    L"\"Software\"), to deal in the Software without restriction, including\n"
+    L"without limitation the rights to use, copy, modify, merge, publish,\n"
+    L"distribute, sublicense, and/or sell copies of the Software, and to\n"
+    L"permit persons to whom the Software is furnished to do so, subject to\n"
+    L"the following conditions:\n"
+    L"\n"
+    L"The above copyright notice and this permission notice shall be\n"
+    L"included in all copies or substantial portions of the Software.\n"
+    L"\n"
+    L"THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\n"
+    L"EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\n"
+    L"MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND\n"
+    L"NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE\n"
+    L"LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\n"
+    L"OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION\n"
+    L"WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n"
+    L"\n";
+
+    wxString desc = "Libraries: \n";
+    desc = desc + "wxWidget (v"
+			+ wxString::Format(wxT("%i"),wxMAJOR_VERSION) + "."
+			+ wxString::Format(wxT("%i"),wxMINOR_VERSION) + "."
+			+ wxString::Format(wxT("%i"),wxRELEASE_NUMBER) + ")\n";
+
+    desc = desc + "ceSerial (git)";
+
+    info.SetName("wxWidget Serial Terminal");
+    info.SetCopyright("MIT by Achmadi@2021");
+    info.SetLicence(license);
+    info.SetDescription(desc);
+
+    wxAboutBox(info);
 }
