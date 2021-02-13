@@ -3,6 +3,8 @@ Simple Serial Terminal based on wxWidgets and ceSerial
 
 This is a simple Serial terminal build on top wxWidgets and ceSerial.
 
+![Program Preview](preview.png?raw=true)
+
 ### How to build
 
 You can build from this source using provided Code::Blocks project file.
