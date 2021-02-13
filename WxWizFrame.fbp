@@ -50,7 +50,7 @@
             <property name="size">500,600</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass"></property>
-            <property name="title">wxWidgets Application Template</property>
+            <property name="title">Simple Serial Terminal</property>
             <property name="tooltip"></property>
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
