@@ -52,6 +52,8 @@ class GUIFrame : public wxFrame
 		wxStaticText* m_lblParFlow;
 		wxButton* m_btnPortList;
 		wxButton* m_btnPortOpen;
+		wxStaticText* m_lblConsole;
+		wxButton* m_btnClear;
 		wxTextCtrl* m_txtConsole;
 		wxStaticText* m_lblSend;
 		wxTextCtrl* m_txtSend;
@@ -63,6 +65,7 @@ class GUIFrame : public wxFrame
 		virtual void onPortChoice( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onBaudChoice( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onBtnPortOpen( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onBtnClear( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onTxtSendEnter( wxCommandEvent& event ) { event.Skip(); }
 
 

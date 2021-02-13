@@ -124,6 +124,10 @@ void wxsertermFrame::closingPort(void){
     }
 }
 
+void wxsertermFrame::onBtnClear(wxCommandEvent& event){
+    m_txtConsole->Clear();
+}
+
 void wxsertermFrame::onCharReceive(char ch){
     if(ignoreLF){if(ch=='\r')return;}
 

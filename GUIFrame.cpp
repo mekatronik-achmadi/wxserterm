@@ -125,6 +125,19 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bText;
 	bText = new wxBoxSizer( wxVERTICAL );
 
+	wxBoxSizer* bConsole;
+	bConsole = new wxBoxSizer( wxHORIZONTAL );
+
+	m_lblConsole = new wxStaticText( this, wxID_ANY, wxT("Received Text"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_lblConsole->Wrap( -1 );
+	bConsole->Add( m_lblConsole, 1, wxALL|wxEXPAND, 5 );
+
+	m_btnClear = new wxButton( this, wxID_ANY, wxT("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
+	bConsole->Add( m_btnClear, 0, wxALL, 5 );
+
+
+	bText->Add( bConsole, 0, wxEXPAND, 5 );
+
 	m_txtConsole = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxTE_MULTILINE|wxTE_READONLY );
 	bText->Add( m_txtConsole, 1, wxALL|wxEXPAND, 5 );
 
@@ -155,6 +168,7 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_chPort->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( GUIFrame::onPortChoice ), NULL, this );
 	m_chBaud->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( GUIFrame::onBaudChoice ), NULL, this );
 	m_btnPortOpen->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUIFrame::onBtnPortOpen ), NULL, this );
+	m_btnClear->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUIFrame::onBtnClear ), NULL, this );
 	m_txtSend->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( GUIFrame::onTxtSendEnter ), NULL, this );
 }
 
@@ -165,6 +179,7 @@ GUIFrame::~GUIFrame()
 	m_chPort->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( GUIFrame::onPortChoice ), NULL, this );
 	m_chBaud->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( GUIFrame::onBaudChoice ), NULL, this );
 	m_btnPortOpen->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUIFrame::onBtnPortOpen ), NULL, this );
+	m_btnClear->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUIFrame::onBtnClear ), NULL, this );
 	m_txtSend->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( GUIFrame::onTxtSendEnter ), NULL, this );
 
 }

@@ -30,6 +30,7 @@ class wxsertermFrame: public GUIFrame
         virtual void OnAbout(wxCommandEvent& event);
 
         // override from GUIFrame
+        virtual void onBtnClear( wxCommandEvent& event );
         virtual void onPortChoice( wxCommandEvent& event );
 		virtual void onBaudChoice( wxCommandEvent& event );
 		virtual void onBtnPortOpen( wxCommandEvent& event );
